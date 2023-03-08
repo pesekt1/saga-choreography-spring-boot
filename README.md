@@ -1,5 +1,7 @@
 # saga-choreography-example
 
+![](.README_images/architecture.png)
+
 # Apache Kafka
 https://hub.docker.com/r/bitnami/kafka
 docker-compose
