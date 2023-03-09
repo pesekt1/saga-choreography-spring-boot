@@ -1,0 +1,28 @@
+### create an order
+POST http://localhost:8081/order/create
+Content-Type: application/json
+
+{
+  "userId": 103,
+  "productId": 33,
+  "amount": 4000
+}
+
+### create an order
+POST http://localhost:8081/order/create
+Content-Type: application/json
+
+{
+  "userId": 103,
+  "productId": 12,
+  "amount": 800
+}
+
+### get orders
+GET http://localhost:8081/orders
+Content-Type: application/json
+
+###
+
+
+
