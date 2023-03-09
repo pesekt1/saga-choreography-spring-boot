@@ -30,28 +30,48 @@ services:
 
 run: docker-compose up
 
+![](.README_images/docker_desktop.png)
+
 ##
 Kafka tool: https://www.kafkatool.com/
 
 - with this tool we can monitor messages in the topics.
 - install the tool and connect to the kafka cluster
 
+![](.README_images/offset_explorer.png)
 
 ## Run the microservices:
 - order service
 - payment service
 
+![](.README_images/services.png)
+
 Now we can test the saga pattern:
 
+PaymentService initializes some data:
+```java
+@PostConstruct
+public void initUserBalanceInDB() {
+        userBalanceRepository.saveAll(Stream.of(
+        new UserBalance(101, 5000),
+        new UserBalance(102, 3000),
+        new UserBalance(103, 4200),
+        new UserBalance(104, 20000),
+        new UserBalance(105, 999)).collect(Collectors.toList()));
+        }
+```
+
+
 ## request
-```bash
-curl --location --request POST 'http://localhost:8081/order/create' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "userId": 103,
-    "productId": 33,
-    "amount": 4000
-}'
+```http request
+POST http://localhost:8081/order/create
+Content-Type: application/json
+
+{
+  "userId": 103,
+  "productId": 33,
+  "amount": 4000
+}
 ```
 ## Kafka payload
 
@@ -65,17 +85,18 @@ curl --location --request POST 'http://localhost:8081/order/create' \
 ```
 
 ## Request
-```bash
-curl --location --request POST 'http://localhost:8081/orders' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "userId": 103,
-    "productId": 12,
-    "amount": 800
-}'
+```http request
+POST http://localhost:8081/order/create
+Content-Type: application/json
+
+{
+  "userId": 103,
+  "productId": 12,
+  "amount": 800
+}
 ```
 
-### insufficent amount
+### insufficent funds
 ```bash
 {"eventId":"fecacc77-017d-49cd-bdfa-58e47170da49","date":"2021-09-03T17:28:23.126+00:00","orderRequestDto":{"userId":103,"productId":12,"amount":800,"orderId":2},"orderStatus":"ORDER_CANCELLED"}
 ```
@@ -84,10 +105,9 @@ curl --location --request POST 'http://localhost:8081/orders' \
 {"eventId":"46378bbc-5d15-4436-bed1-c6f3ddb1dc31","date":"2021-09-03T17:28:15.940+00:00","paymentRequestDto":{"orderId":2,"userId":103,"amount":800},"paymentStatus":"PAYMENT_FAILED"}
 ```
 
-```bash
-curl --location --request GET 'http://localhost:8081/orders' \
---header 'Content-Type: application/json' \
---data-raw ''
+```http request
+GET http://localhost:8081/orders
+Content-Type: application/json
 ```
 
 ## Response
