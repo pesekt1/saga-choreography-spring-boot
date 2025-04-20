@@ -9,13 +9,13 @@ docker-compose
 version: "3"
 services:
   zookeeper:
-    image: 'bitnami/zookeeper:latest'
+    image: 'bitnami/zookeeper:3.7.2-debian-11-r6'
     ports:
       - '2181:2181'
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
   kafka:
-    image: 'bitnami/kafka:latest'
+    image: 'bitnami/kafka:3.7.0-debian-12-r3'
     ports:
       - '9092:9092'
     environment:
@@ -37,6 +37,8 @@ Kafka tool: https://www.kafkatool.com/
 
 - with this tool we can monitor messages in the topics.
 - install the tool and connect to the kafka cluster
+- Porperties: select json and update
+- click on the green arrow to load the messages.
 
 ![](.README_images/offset_explorer.png)
 
@@ -48,7 +50,7 @@ Kafka tool: https://www.kafkatool.com/
 
 Now we can test the saga pattern:
 
-PaymentService initializes some data:
+PaymentService initializes some data (it uses local MySQL server)
 ```java
 @PostConstruct
 public void initUserBalanceInDB() {
@@ -63,6 +65,7 @@ public void initUserBalanceInDB() {
 
 
 ## request
+File httpRequests.http:
 ```http request
 POST http://localhost:8081/order/create
 Content-Type: application/json
