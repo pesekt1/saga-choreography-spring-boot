@@ -1,5 +1,5 @@
 ### create an order
-POST http://localhost:8081/order/create
+POST http://localhost:8081/orders/create
 Content-Type: application/json
 
 {
@@ -9,7 +9,7 @@ Content-Type: application/json
 }
 
 ### create an order
-POST http://localhost:8081/order/create
+POST http://localhost:8081/orders/create
 Content-Type: application/json
 
 {
