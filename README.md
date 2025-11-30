@@ -1,39 +1,27 @@
 # saga-choreography-example
 
+## System architecture
 ![](.README_images/architecture.png)
 
-# Apache Kafka
-https://hub.docker.com/r/bitnami/kafka
-docker-compose
-```yaml
-version: "3"
-services:
-  zookeeper:
-    image: 'bitnami/zookeeper:3.7.2-debian-11-r6'
-    ports:
-      - '2181:2181'
-    environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
-  kafka:
-    image: 'bitnami/kafka:3.7.0-debian-12-r3'
-    ports:
-      - '9092:9092'
-    environment:
-      - KAFKA_BROKER_ID=1
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-      - ALLOW_PLAINTEXT_LISTENER=yes
-    depends_on:
-      - zookeeper
-```
+## Dependencies
 
-run: docker-compose up
+- MySQL Server
+- Apache Kafka
+- Zookeeper
+- Kafka UI
+
+
+## Start the infrastructure with docker-compose
+run: docker-compose up -d --build
 
 ![](.README_images/docker_desktop.png)
 
-##
-Kafka tool: https://www.kafkatool.com/
+## Kafka UI
+Run Kafka UI as a docker container service in docker-compose
+![](.README_images/kafka-ui.png)
+
+## Kafka tool - alternative to Kafka UI
+https://www.kafkatool.com/
 
 - with this tool we can monitor messages in the topics.
 - install the tool and connect to the kafka cluster
@@ -42,15 +30,26 @@ Kafka tool: https://www.kafkatool.com/
 
 ![](.README_images/offset_explorer.png)
 
-## Run the microservices:
-- order service
-- payment service
+## MySQL setup
 
-![](.README_images/services.png)
+![](.README_images/databases.png)
 
-Now we can test the saga pattern:
+We have init.sql script that is used in docker-compose to initialize the MySQL database with the required table.
 
-PaymentService initializes some data (it uses local MySQL server)
+```sql
+CREATE DATABASE IF NOT EXISTS orderServiceDb;
+CREATE DATABASE IF NOT EXISTS paymentServiceDb;
+
+-- Create a limited user for the services (safer than using root)
+CREATE USER IF NOT EXISTS 'springuser'@'%' IDENTIFIED BY 'springpwd';
+GRANT ALL PRIVILEGES ON orderServiceDb.* TO 'springuser'@'%';
+GRANT ALL PRIVILEGES ON paymentServiceDb.* TO 'springuser'@'%';
+FLUSH PRIVILEGES;
+```
+
+
+
+PaymentService initializes data in user_balance table in paymentServiceDb (it uses local MySQL server)
 ```java
 @PostConstruct
 public void initUserBalanceInDB() {
@@ -64,7 +63,8 @@ public void initUserBalanceInDB() {
 ```
 
 
-## request
+## HTTP Requests for testing the funiconality
+
 File httpRequests.http:
 ```http request
 POST http://localhost:8081/order/create
