@@ -11,6 +11,12 @@
 
     <artifactId>common-dtos</artifactId>
 
+    <!-- Prevent spring-boot-maven-plugin from repackaging this module as an executable jar
+         so its classes are available on the classpath to other modules during compilation. -->
+    <properties>
+        <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
