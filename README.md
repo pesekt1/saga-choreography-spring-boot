@@ -14,7 +14,7 @@
 ## Start the infrastructure with docker-compose
 run: docker-compose up -d --build
 
-![](.README_images/docker_desktop.png)
+![](.README_images/docker_desktop-2.png)
 
 ## Kafka UI
 Run Kafka UI as a docker container service in docker-compose
